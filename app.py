@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_bcrypt import Bcrypt
 from models import db, User
-
+from utilis import get_people_in_space
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///utenti.db'
@@ -27,7 +27,14 @@ def load_user(id_user):
 @app.route('/home')
 @login_required
 def home():
-    return render_template('home.html', username=current_user.username)
+     people_in_space = get_people_in_space()
+     return render_template('home.html', username=current_user.username, people_in_space=people_in_space)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()  #logout user
+    return redirect(url_for('login'))  #torniamo al login
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
